@@ -62,32 +62,18 @@ class GSAT(nn.Module):
         self.multi_label = multi_label
         self.criterion = Criterion(num_class, multi_label)
 
-    # def __loss__(self, att, clf_logits, clf_labels, epoch):
-    #     pred_loss = self.criterion(clf_logits, clf_labels)
-
-    #     r = self.fix_r if self.fix_r else self.get_r(self.decay_interval, self.decay_r, epoch, final_r=self.final_r, init_r=self.init_r)
-    #     info_loss = (att * torch.log(att/r + 1e-6) + (1-att) * torch.log((1-att)/(1-r+1e-6) + 1e-6)).mean()
-
-    #     pred_loss = pred_loss * self.pred_loss_coef
-    #     info_loss = info_loss * self.info_loss_coef
-    #     loss = pred_loss + info_loss
-    #     loss_dict = {'loss': loss.item(), 'pred': pred_loss.item(), 'info': info_loss.item()}
-    #     return loss, loss_dict
     def __loss__(self, att, clf_logits, clf_labels, epoch):
         pred_loss = self.criterion(clf_logits, clf_labels)
 
         r = self.fix_r if self.fix_r else self.get_r(self.decay_interval, self.decay_r, epoch, final_r=self.final_r, init_r=self.init_r)
         info_loss = (att * torch.log(att/r + 1e-6) + (1-att) * torch.log((1-att)/(1-r+1e-6) + 1e-6)).mean()
 
-        # HERE -- removing info loss and trying with fc layers
-        # info_loss = (att * torch.log(att/r + 1e-6) + (1-att) * torch.log((1-att)/(1-r+1e-6) + 1e-6)).mean()
-        info_loss = 0
-
         pred_loss = pred_loss * self.pred_loss_coef
         info_loss = info_loss * self.info_loss_coef
         loss = pred_loss + info_loss
-        loss_dict = {'loss': loss.item(), 'pred': pred_loss.item(), 'info': info_loss}
+        loss_dict = {'loss': loss.item(), 'pred': pred_loss.item(), 'info': info_loss.item()}
         return loss, loss_dict
+
 
     def forward_pass(self, data, epoch, training):
         # embeddings_per_layer = [] 
