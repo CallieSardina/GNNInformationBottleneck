@@ -1,0 +1,16 @@
+scikit-learn
+pandas
+opencv-python
+networkx
+matplotlib
+tensorboard
+tensorboardX
+jupyter
+tqdm
+wandb
+torchvision
+torch
+dill
+seaborn
+gdown
+pgmpy==0.1.11

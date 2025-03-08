@@ -1,0 +1,9 @@
+Layer 0: Avg MI_XZ: 2.3417, Avg MI_ZY: 0.0010
+Layer 1: Avg MI_XZ: 1.6383, Avg MI_ZY: 0.0010
+Layer 2: Avg MI_XZ: 1.0809, Avg MI_ZY: 0.0010
+Layer 0: Avg MI_XZ: 2.3417, Avg MI_ZY: 0.0010
+Layer 1: Avg MI_XZ: 1.6383, Avg MI_ZY: 0.0010
+Layer 2: Avg MI_XZ: 1.0809, Avg MI_ZY: 0.0010
+Layer 0: Avg MI_XZ: 2.3417, Avg MI_ZY: 0.0010
+Layer 1: Avg MI_XZ: 1.6383, Avg MI_ZY: 0.0010
+Layer 2: Avg MI_XZ: 1.0809, Avg MI_ZY: 0.0010

@@ -1,0 +1,42 @@
+styx.cs.ucsb.edu
+0
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/libpyg.so: undefined symbol: _ZNK5torch8autograd4Node4nameEv
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_geometric/typing.py:86: UserWarning: An issue occurred while importing 'torch-scatter'. Disabling its usage. Stacktrace: /home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_scatter/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_geometric/typing.py:97: UserWarning: An issue occurred while importing 'torch-cluster'. Disabling its usage. Stacktrace: /home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_cluster/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_geometric/typing.py:113: UserWarning: An issue occurred while importing 'torch-spline-conv'. Disabling its usage. Stacktrace: /home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_spline_conv/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_sparse/_version_cuda.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch_geometric/deprecation.py:26: UserWarning: 'data.DataLoader' is deprecated, use 'loader.DataLoader' instead
+  warnings.warn(out)
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch/utils/data/dataloader.py:624: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+CUDA 1
+3035
+867
+434
+DataBatch(x=[49, 14], edge_index=[2, 104], y=[1], batch=[49], ptr=[2])
+Method: base
+embed: False
+epochs :  300
+/home/calliesardina/miniconda3/envs/fact2/lib/python3.9/site-packages/torch/nn/_reduction.py:51: UserWarning: size_average and reduce args will be deprecated, please use reduction='mean' instead.
+  warnings.warn(warning.format(ret))
+Epoch: 0	Train accuracy: 0.6131795716639209	Valid accuracy: 0.6632064590542099
+Epoch 0
+train_acc 0.6131795716639209
+val_acc 0.6632064590542099
+Epoch: 1	Train accuracy: 0.6925864909390445	Valid accuracy: 0.7416378316032295
+Epoch 1
+train_acc 0.6925864909390445
+val_acc 0.7416378316032295
+Epoch: 2	Train accuracy: 0.7327841845140033	Valid accuracy: 0.7531718569780853
+Epoch 2
+train_acc 0.7327841845140033
+val_acc 0.7531718569780853
+Epoch: 3	Train accuracy: 0.757495881383855	Valid accuracy: 0.7600922722029988
+Epoch 3
+train_acc 0.757495881383855
+val_acc 0.7600922722029988

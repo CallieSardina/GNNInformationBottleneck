@@ -1,0 +1,12 @@
+#!/bin/bash  -l
+#SBATCH --gres=gpu:h200-1g.35gb:1
+
+cd $SLURM_SUBMIT_DIR
+
+/bin/hostname
+
+echo $CUDA_VISIBLE_DEVICES
+
+conda activate fact
+
+python3 notebook_from_original_authors.py  
