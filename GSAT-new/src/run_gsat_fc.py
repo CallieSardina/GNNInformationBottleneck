@@ -49,7 +49,7 @@ class GSAT(nn.Module):
         self.viz_interval = shared_config['viz_interval']
         self.viz_norm_att = shared_config['viz_norm_att']
 
-        self.epochs = method_config['epochs']
+        self.epochs = 400 # method_config['epochs']
         self.pred_loss_coef = method_config['pred_loss_coef']
         self.info_loss_coef = method_config['info_loss_coef']
 
@@ -66,8 +66,10 @@ class GSAT(nn.Module):
         # Define FC layers
         clf_output_dim = self.clf.fc_out[-1].out_features  
 
-        self.fc1 = nn.Linear(64, 32)
-        self.fc2 = nn.Linear(32, 64)
+        self.fc1 = nn.Linear(64, 128)
+        self.fc2 = nn.Linear(128, 512)
+        self.fc3 = nn.Linear(512, 128)
+        self.fc4 = nn.Linear(128, 64)
 
     def __loss__(self, att, clf_logits, clf_labels, epoch):
         pred_loss = self.criterion(clf_logits, clf_labels)
@@ -86,13 +88,25 @@ class GSAT(nn.Module):
         return loss, loss_dict
 
     def forward_pass(self, data, epoch, training):
-        # embeddings_per_layer = [] 
+        embeddings_per_layer = [] 
 
         emb = self.clf.get_emb(data.x, data.edge_index, batch=data.batch, edge_attr=data.edge_attr)
+        embeddings_per_layer.append(emb)
 
-        emb = self.fc1(emb)  
+        emb = self.fc1(emb) 
+        embeddings_per_layer.append(emb) 
         emb = F.relu(emb)  
+
         emb = self.fc2(emb)
+        embeddings_per_layer.append(emb)
+        emb = F.relu(emb) 
+
+        emb = self.fc3(emb)
+        embeddings_per_layer.append(emb)
+        emb = F.relu(emb) 
+
+        emb = self.fc4(emb)
+        embeddings_per_layer.append(emb)
 
         # print("Emb shape: ", emb.shape)
         # embeddings_per_layer.append(emb)
@@ -113,14 +127,14 @@ class GSAT(nn.Module):
         clf_logits = self.clf(data.x, data.edge_index, data.batch, edge_attr=data.edge_attr, edge_atten=edge_att)
 
         loss, loss_dict = self.__loss__(att, clf_logits, data.y, epoch)
-        return edge_att, loss, loss_dict, clf_logits, emb
+        return edge_att, loss, loss_dict, clf_logits, emb, embeddings_per_layer
 
     @torch.no_grad()
     def eval_one_batch(self, data, epoch):
         self.extractor.eval()
         self.clf.eval()
 
-        att, loss, loss_dict, clf_logits, _ = self.forward_pass(data, epoch, training=False)
+        att, loss, loss_dict, clf_logits, _, _ = self.forward_pass(data, epoch, training=False)
         return att.data.cpu().reshape(-1), loss_dict, clf_logits.data.cpu()
 
     def train_one_batch(self, data, epoch):
@@ -130,11 +144,11 @@ class GSAT(nn.Module):
         mi_XZ = []
         mi_ZY = []
 
-        att, loss, loss_dict, clf_logits, emb = self.forward_pass(data, epoch, training=True)
+        att, loss, loss_dict, clf_logits, emb, embeddings_per_layer = self.forward_pass(data, epoch, training=True)
         graph_emb = torch_scatter.scatter(emb, data.batch, dim=0, reduce="mean")  # Shape: [batch_size, emb_dim]
 
         # embed subgraph 
-        att_sub, loss_sub, loss_dict_sub, clf_logits_sub, emb_sub = self.forward_pass(data, epoch, training=True)
+        att_sub, loss_sub, loss_dict_sub, clf_logits_sub, emb_sub, embeddings_per_layer = self.forward_pass(data, epoch, training=True)
         graph_emb_sub = torch_scatter.scatter(emb_sub, data.batch, dim=0, reduce="mean")  # Shape: [batch_size, emb_dim]
 
         # compute MI
@@ -144,12 +158,16 @@ class GSAT(nn.Module):
 
         print(g.shape, g_s.shape, y.shape)
 
-        mi_XZ = EDGE(g, g_s)
-        mi_ZY = EDGE(g_s, y)
+        mi_g_gs = EDGE(g, g_s)
+        mi_gs_y = EDGE(g_s, y)
 
-        # print("HERE Y: ", y)
+        mi_XZ = [EDGE(embeddings_per_layer[0].clone().detach().numpy(), embeddings_per_layer[i].clone().detach().numpy()) for i in range(len(embeddings_per_layer))]
+        mi_ZY = [EDGE(y, embeddings_per_layer[i].clone().detach().numpy()) for i in range(len(embeddings_per_layer))]
 
-        with open('./run_results_gsat_fc_extractor.txt', 'a') as f:
+        with open('./gsat_ggs_fc_extractor_512_400_epochs.txt', 'a') as f:
+            print(f"Epoch {epoch}, MI_XZ: {mi_g_gs}, MI_ZY: {mi_gs_y}", file=f)
+
+        with open('./gsat_embs_fc_extractor_512_400_epochs.txt', 'a') as f:
             print(f"Epoch {epoch}, MI_XZ: {mi_XZ}, MI_ZY: {mi_ZY}", file=f)
 
         
@@ -281,8 +299,9 @@ class GSAT(nn.Module):
             if self.num_viz_samples != 0 and (epoch % self.viz_interval == 0 or epoch == self.epochs - 1):
                 if self.multi_label:
                     raise NotImplementedError
-                for idx, tag in viz_set:
-                    self.visualize_results(test_set, idx, epoch, tag, use_edge_attr)
+                # HERE
+                # for idx, tag in viz_set:
+                    # self.visualize_results(test_set, idx, epoch, tag, use_edge_attr)
 
             if epoch == self.epochs - 1:
                 save_checkpoint(self.clf, self.model_dir, model_name='gsat_clf_epoch_' + str(epoch))
@@ -537,6 +556,7 @@ def main():
 
     time = datetime.now().strftime("%m_%d_%Y-%H_%M_%S")
     device = torch.device(f'cuda:{cuda_id}' if cuda_id >= 0 else 'cpu')
+    print(device)
 
     metric_dicts = []
     for random_state in range(num_seeds):
